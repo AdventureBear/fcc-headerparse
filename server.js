@@ -14,6 +14,8 @@ var parser = require('ua-parser-js');
 
 app.set('port', (process.env.PORT || 5000));
 
+app.use(express.static('.'));
+
 app.use(function(req, res, next){
   //console.log(req.headers);
   //req.ua = req.headers['user-agent'];
@@ -22,7 +24,6 @@ app.use(function(req, res, next){
   req.lang = langStr.ua.toString().split(',')[0];
   req.ua = parser(req.headers['user-agent']);
   // write the result as response
-
 
   //req.ip = req.headers
 next();
@@ -41,8 +42,8 @@ app.get('/chance', function (request, response){
 
 
 
-app.get('/', function (req, res) {
-  res.send('Hello World!');
+app.get("/",function(req,res){
+  res.send('index.html');
 });
 
 app.get('/api/whoami', function(request, response) {
@@ -50,7 +51,7 @@ app.get('/api/whoami', function(request, response) {
   //response.end(JSON.stringify(request.ua, null, '  '));
 
   response.json({
-    ipaddress: request.ip,
+    ip6address: request.ip,
     language: request.lang,
     software: (request.ua.os.name + ", " + request.ua.os.version)
   })
