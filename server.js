@@ -9,14 +9,21 @@
 
 var express = require('express');
 var app = express();
-var http = require('http');
+//var http = require('http');
+var parser = require('ua-parser-js');
 
 app.set('port', (process.env.PORT || 5000));
 
 app.use(function(req, res, next){
-  console.log(req.headers);
-  req.ua = req.headers['user-agent'];
-  req.lang = req.headers['accept-language'];
+  //console.log(req.headers);
+  //req.ua = req.headers['user-agent'];
+  var langStr = parser(req.headers['accept-language']);
+  console.log(langStr);
+  req.lang = langStr.ua.toString().split(',')[0];
+  req.ua = parser(req.headers['user-agent']);
+  // write the result as response
+
+
   //req.ip = req.headers
 next();
 })
@@ -39,11 +46,16 @@ app.get('/', function (req, res) {
 });
 
 app.get('/api/whoami', function(request, response) {
+
+  //response.end(JSON.stringify(request.ua, null, '  '));
+
   response.json({
     ipaddress: request.ip,
     language: request.lang,
-    software: request.ua,
+    software: (request.ua.os.name + ", " + request.ua.os.version)
   })
+
+
 
 });
 
